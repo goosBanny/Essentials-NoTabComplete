@@ -114,29 +114,29 @@ public class SimpleMessageRecipient implements IMessageRecipient {
                 sendTl("msgFormat", AdventureUtil.parsed(tlSender("meSender")), recipient.getDisplayName(), message);
 
                 // Better Social Spy
-                if (ess.getSettings().isSocialSpyMessages()) {
-                    final User senderUser = getUser(this);
-                    final User recipientUser = getUser(recipient);
-                    if (senderUser != null // not null if player.
-                            // Dont spy on chats involving socialspy exempt players
-                            && !senderUser.isAuthorized("essentials.chat.spy.exempt")
-                            && recipientUser != null && !recipientUser.isAuthorized("essentials.chat.spy.exempt")) {
-                        final String senderName = ess.getSettings().isSocialSpyDisplayNames() ? getDisplayName() : getName();
-                        final String recipientName = ess.getSettings().isSocialSpyDisplayNames() ? recipient.getDisplayName() : recipient.getName();
-                        for (final User onlineUser : ess.getOnlineUsers()) {
-                            if (onlineUser.isSocialSpyEnabled()
-                                    // Don't send socialspy messages to message sender/receiver to prevent spam
-                                    && !onlineUser.equals(senderUser)
-                                    && !onlineUser.equals(recipient)) {
-                                if (senderUser.isMuted() && ess.getSettings().getSocialSpyListenMutedPlayers()) {
-                                    onlineUser.sendComponent(AdventureUtil.miniMessage().deserialize(tlSender("socialSpyMutedPrefix") + tlLiteral("socialSpyMsgFormat", senderName, recipientName, message)));
-                                } else {
-                                    onlineUser.sendComponent(AdventureUtil.miniMessage().deserialize(tlLiteral("socialSpyPrefix") + tlLiteral("socialSpyMsgFormat", senderName, recipientName, message)));
-                                }
-                            }
-                        }
-                    }
-                }
+//                if (ess.getSettings().isSocialSpyMessages()) {
+//                    final User senderUser = getUser(this);
+//                    final User recipientUser = getUser(recipient);
+//                    if (senderUser != null // not null if player.
+//                            // Dont spy on chats involving socialspy exempt players
+//                            && !senderUser.isAuthorized("essentials.chat.spy.exempt")
+//                            && recipientUser != null && !recipientUser.isAuthorized("essentials.chat.spy.exempt")) {
+//                        final String senderName = ess.getSettings().isSocialSpyDisplayNames() ? getDisplayName() : getName();
+//                        final String recipientName = ess.getSettings().isSocialSpyDisplayNames() ? recipient.getDisplayName() : recipient.getName();
+//                        for (final User onlineUser : ess.getOnlineUsers()) {
+//                            if (onlineUser.isSocialSpyEnabled()
+//                                    // Don't send socialspy messages to message sender/receiver to prevent spam
+//                                    && !onlineUser.equals(senderUser)
+//                                    && !onlineUser.equals(recipient)) {
+//                                if (senderUser.isMuted() && ess.getSettings().getSocialSpyListenMutedPlayers()) {
+//                                    onlineUser.sendComponent(AdventureUtil.miniMessage().deserialize(tlSender("socialSpyMutedPrefix") + tlLiteral("socialSpyMsgFormat", senderName, recipientName, message)));
+//                                } else {
+//                                    onlineUser.sendComponent(AdventureUtil.miniMessage().deserialize(tlLiteral("socialSpyPrefix") + tlLiteral("socialSpyMsgFormat", senderName, recipientName, message)));
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
                 break;
         }
         // If the message was a success, set this sender's reply-recipient to the current recipient.
