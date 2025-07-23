@@ -817,7 +817,7 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+   // @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent event) {
         boolean updateActivity = true;
 

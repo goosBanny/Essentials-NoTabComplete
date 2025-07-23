@@ -237,7 +237,7 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+  //  @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityRegainHealth(final EntityRegainHealthEvent event) {
         if (event.getRegainReason() == RegainReason.SATIATED && event.getEntity() instanceof Player && ess.getUser((Player) event.getEntity()).isAfk() && ess.getSettings().getFreezeAfkPlayers()) {
             event.setCancelled(true);
