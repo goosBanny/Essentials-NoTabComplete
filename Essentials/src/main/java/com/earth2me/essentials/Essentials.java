@@ -618,11 +618,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
         return commandMap;
     }
 
-//    @Override
-//    public List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command command, final @NotNull String commandLabel, final String[] args) {
-//        return onTabCompleteEssentials(sender, command, commandLabel, args, Essentials.class.getClassLoader(),
-//            "com.earth2me.essentials.commands.Command", "essentials.", null);
-//    }
+    @Override
+    public List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command command, final @NotNull String commandLabel, final String[] args) {
+        return onTabCompleteEssentials(sender, command, commandLabel, args, Essentials.class.getClassLoader(),
+            "com.earth2me.essentials.commands.Command", "essentials.", null);
+    }
 
     @Override
     public List<String> onTabCompleteEssentials(final CommandSender cSender, final Command command, final String commandLabel, final String[] args,
