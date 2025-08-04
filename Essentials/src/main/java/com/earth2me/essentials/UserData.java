@@ -684,7 +684,9 @@ public abstract class UserData extends PlayerExtension implements IConf {
         }
 
         if (getCooldownsList().removeIf(cooldown -> cooldown != null && !cooldown.isIncomplete() && cooldown.pattern().equals(pattern))) {
-            save();
+            if (ess.getSettings().isCommandCooldownPersistent("")) {
+                save();
+            }
             return true;
         }
         return false;
