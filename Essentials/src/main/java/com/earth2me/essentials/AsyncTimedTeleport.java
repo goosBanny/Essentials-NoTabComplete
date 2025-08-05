@@ -139,7 +139,7 @@ public class AsyncTimedTeleport implements Runnable {
             }
         }
 
-        ess.scheduleSyncDelayedTask(new DelayedTeleportTask());
+        ess.scheduleAsyncDelayedTask(new DelayedTeleportTask());
     }
 
     //If we need to cancelTimer a pending teleportPlayer call this method

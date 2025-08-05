@@ -42,6 +42,7 @@ import com.earth2me.essentials.updatecheck.UpdateChecker;
 import com.earth2me.essentials.userstorage.ModernUserMap;
 import com.earth2me.essentials.utils.AdventureUtil;
 import com.earth2me.essentials.utils.FormatUtil;
+import com.earth2me.essentials.utils.TaskUtil;
 import com.earth2me.essentials.utils.VersionUtil;
 import io.papermc.lib.PaperLib;
 import net.ess3.api.Economy;
@@ -202,7 +203,7 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     @Override
     public void onEnable() {
         try {
-
+            new TaskUtil(this);
             Bukkit.getScheduler().runTaskTimerAsynchronously(this, new EssentialsPlayerListener(this), 0L, 2L);
 
             if (BUKKIT_LOGGER != super.getLogger()) {
@@ -418,7 +419,7 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             alternativeCommandsHandler = new AlternativeCommandsHandler(this);
 
             timer = new EssentialsTimer(this);
-            scheduleSyncRepeatingTask(timer, 1000, 50);
+            scheduleAsyncRepeatingTask(timer, 1000, 50);
 
             Economy.setEss(this);
             execTimer.mark("RegHandler");
@@ -1051,11 +1052,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             LOGGER.log(Level.WARNING, "Essentials userMap not initialized");
             return null;
         }
-
         final User user = userMap.getUser(base);
 
         if (base.getClass() != UUIDPlayer.class || user.getBase() == null) {
             user.update(base);
+
         }
         return user;
     }
@@ -1212,6 +1213,23 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     public int scheduleSyncRepeatingTask(final Runnable run, final long delay, final long period) {
         return this.getScheduler().scheduleSyncRepeatingTask(this, run, delay, period);
     }
+
+
+    @Override
+    public int scheduleAsyncDelayedTask(final Runnable run) {
+        return this.getScheduler().scheduleAsyncDelayedTask(this, run);
+    }
+
+    @Override
+    public int scheduleAsyncDelayedTask(final Runnable run, final long delay) {
+        return this.getScheduler().scheduleAsyncDelayedTask(this, run, delay);
+    }
+
+    @Override
+    public int scheduleAsyncRepeatingTask(final Runnable run, final long delay, final long period) {
+        return this.getScheduler().scheduleAsyncRepeatingTask(this, run, delay, period);
+    }
+
 
     @Override
     public PermissionsHandler getPermissionsHandler() {

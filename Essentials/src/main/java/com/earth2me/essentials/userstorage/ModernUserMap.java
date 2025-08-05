@@ -144,6 +144,7 @@ public class ModernUserMap extends CacheLoader<UUID, User> implements IUserMap {
             }
             user.update(base);
         }
+
         uuidCache.updateCache(user.getUUID(), user.getName());
 
         return user;

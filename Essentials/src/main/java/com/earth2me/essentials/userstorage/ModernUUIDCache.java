@@ -1,6 +1,7 @@
 package com.earth2me.essentials.userstorage;
 
 import com.earth2me.essentials.utils.StringUtil;
+import com.earth2me.essentials.utils.TaskUtil;
 import com.google.common.io.Files;
 import net.ess3.api.IEssentials;
 
@@ -86,44 +87,48 @@ public class ModernUUIDCache {
     }
 
     protected void updateCache(final UUID uuid, final String name) {
-        if (uuidCache.add(uuid)) {
-            pendingUuidWrite.set(true);
-        }
-        if (name != null) {
-            final String sanitizedName = getSanitizedName(name);
-            final UUID replacedUuid = nameToUuidMap.put(sanitizedName, uuid);
-            if (!uuid.equals(replacedUuid)) {
-                if (ess.getSettings().isDebug()) {
-                    ess.getLogger().log(Level.WARNING, "Replaced UUID during cache update for " + sanitizedName + ": " + replacedUuid + " -> " + uuid);
-                }
-                pendingNameWrite.set(true);
+        TaskUtil.runAsync(() -> {
+            if (uuidCache.add(uuid)) {
+                pendingUuidWrite.set(true);
             }
-        }
+            if (name != null) {
+                final String sanitizedName = getSanitizedName(name);
+                final UUID replacedUuid = nameToUuidMap.put(sanitizedName, uuid);
+                if (!uuid.equals(replacedUuid)) {
+                    if (ess.getSettings().isDebug()) {
+                        ess.getLogger().log(Level.WARNING, "Replaced UUID during cache update for " + sanitizedName + ": " + replacedUuid + " -> " + uuid);
+                    }
+                    pendingNameWrite.set(true);
+                }
+            }
+        });
     }
 
     protected void removeCache(final UUID uuid) {
-        if (uuid == null) {
-            return;
-        }
-
-        if (uuidCache.remove(uuid)) {
-            pendingUuidWrite.set(true);
-        }
-
-        final Set<String> toRemove = new HashSet<>();
-        for (final Map.Entry<String, UUID> entry : nameToUuidMap.entrySet()) {
-            if (uuid.equals(entry.getValue())) {
-                toRemove.add(entry.getKey());
+        TaskUtil.runAsync(() -> {
+            if (uuid == null) {
+                return;
             }
-        }
 
-        for (final String name : toRemove) {
-            nameToUuidMap.remove(name);
-        }
+            if (uuidCache.remove(uuid)) {
+                pendingUuidWrite.set(true);
+            }
 
-        if (!toRemove.isEmpty()) {
-            pendingNameWrite.set(true);
-        }
+            final Set<String> toRemove = new HashSet<>();
+            for (final Map.Entry<String, UUID> entry : nameToUuidMap.entrySet()) {
+                if (uuid.equals(entry.getValue())) {
+                    toRemove.add(entry.getKey());
+                }
+            }
+
+            for (final String name : toRemove) {
+                nameToUuidMap.remove(name);
+            }
+
+            if (!toRemove.isEmpty()) {
+                pendingNameWrite.set(true);
+            }
+        });
     }
 
     private void loadCache() {

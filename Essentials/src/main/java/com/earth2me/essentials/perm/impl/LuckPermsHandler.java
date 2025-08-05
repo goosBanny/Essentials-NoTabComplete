@@ -3,6 +3,7 @@ package com.earth2me.essentials.perm.impl;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
+import com.earth2me.essentials.utils.TaskUtil;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
@@ -67,25 +68,27 @@ public class LuckPermsHandler extends ModernVaultHandler {
 
         @Override
         public void calculate(final Player target, final ContextConsumer consumer) {
-            // If the player doesn't exist in the UserMap, just skip
-            // Ess will cause performance problems for permissions checks if it attempts to
-            // perform i/o to load the user data otherwise.
-            if (!ess.getUsers().getAllUserUUIDs().contains(target.getUniqueId())) {
-                return;
-            }
+            TaskUtil.runAsync2(() -> {
+                // If the player doesn't exist in the UserMap, just skip
+                // Ess will cause performance problems for permissions checks if it attempts to
+                // perform i/o to load the user data otherwise.
+                if (!ess.getUsers().getAllUserUUIDs().contains(target.getUniqueId())) {
+                    return;
+                }
 
-            final User user = ess.getUsers().loadUncachedUser(target.getUniqueId());
+                final User user = ess.getUsers().loadUncachedUser(target.getUniqueId());
 
-            // This will occur for first time players during join,
-            // None of our contexts would apply to that kind of person anyway,
-            // lets just skip :O
-            if (user == null) {
-                return;
-            }
+                // This will occur for first time players during join,
+                // None of our contexts would apply to that kind of person anyway,
+                // lets just skip :O
+                if (user == null) {
+                    return;
+                }
 
-            for (Calculator calculator : this.calculators) {
-                calculator.function.apply(user).forEach(value -> consumer.accept(calculator.id, value));
-            }
+                for (Calculator calculator : this.calculators) {
+                    calculator.function.apply(user).forEach(value -> consumer.accept(calculator.id, value));
+                }
+            });
         }
 
         @Override

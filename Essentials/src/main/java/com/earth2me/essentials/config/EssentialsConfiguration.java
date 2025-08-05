@@ -13,6 +13,7 @@ import com.earth2me.essentials.config.serializers.LocationTypeSerializer;
 import com.earth2me.essentials.config.serializers.MailMessageSerializer;
 import com.earth2me.essentials.config.serializers.MaterialTypeSerializer;
 import com.earth2me.essentials.utils.AdventureUtil;
+import com.earth2me.essentials.utils.TaskUtil;
 import net.essentialsx.api.v2.services.mail.MailMessage;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -434,7 +435,9 @@ public class EssentialsConfiguration {
     }
 
     public void stopTransaction() {
-        stopTransaction(false);
+        TaskUtil.runAsync(() -> {
+            stopTransaction(false);
+        });
     }
 
     public void stopTransaction(final boolean blocking) {

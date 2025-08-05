@@ -6,13 +6,7 @@ import com.earth2me.essentials.economy.EconomyLayer;
 import com.earth2me.essentials.economy.EconomyLayers;
 import com.earth2me.essentials.messaging.IMessageRecipient;
 import com.earth2me.essentials.messaging.SimpleMessageRecipient;
-import com.earth2me.essentials.utils.AdventureUtil;
-import com.earth2me.essentials.utils.DateUtil;
-import com.earth2me.essentials.utils.EnumUtil;
-import com.earth2me.essentials.utils.FormatUtil;
-import com.earth2me.essentials.utils.NumberUtil;
-import com.earth2me.essentials.utils.TriState;
-import com.earth2me.essentials.utils.VersionUtil;
+import com.earth2me.essentials.utils.*;
 import com.google.common.collect.Lists;
 import net.ess3.api.IEssentials;
 import net.ess3.api.MaxMoneyException;
@@ -1068,9 +1062,11 @@ public class User extends UserData implements Comparable<User>, IMessageRecipien
 
     @Override
     public void sendMessage(final String message) {
-        if (!message.isEmpty()) {
-            base.sendMessage(message);
-        }
+        TaskUtil.runAsync(() -> {
+            if (!message.isEmpty()) {
+                base.sendMessage(message);
+            }
+        });
     }
 
     @Override
@@ -1086,12 +1082,14 @@ public class User extends UserData implements Comparable<User>, IMessageRecipien
 
     @Override
     public void sendTl(String tlKey, Object... args) {
-        final String translation = playerTl(tlKey, args);
-        if (translation.trim().isEmpty()) {
-            return;
-        }
+        TaskUtil.runAsync(() -> {
+            final String translation = playerTl(tlKey, args);
+            if (translation.trim().isEmpty()) {
+                return;
+            }
 
-        sendComponent(AdventureUtil.miniMessage().deserialize(translation));
+            sendComponent(AdventureUtil.miniMessage().deserialize(translation));
+        });
     }
 
     @Override
