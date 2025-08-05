@@ -74,7 +74,7 @@ public class Jails implements net.ess3.api.IJails {
         enabled = true;
         final PluginManager pluginManager = ess.getServer().getPluginManager();
         final JailListener blockListener = new JailListener();
-        pluginManager.registerEvents(blockListener, ess);
+     //   pluginManager.registerEvents(blockListener, ess);
         if (ess.getSettings().isDebug()) {
             ess.getLogger().log(Level.INFO, "Registering Jail listener");
         }

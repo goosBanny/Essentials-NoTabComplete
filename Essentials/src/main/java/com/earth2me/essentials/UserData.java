@@ -8,6 +8,7 @@ import com.earth2me.essentials.config.holders.UserConfigHolder;
 import com.earth2me.essentials.userstorage.ModernUserMap;
 import com.earth2me.essentials.utils.NumberUtil;
 import com.earth2me.essentials.utils.StringUtil;
+import com.earth2me.essentials.utils.TaskUtil;
 import com.google.common.base.Charsets;
 import net.ess3.api.IEssentials;
 import net.ess3.api.MaxMoneyException;
@@ -281,11 +282,13 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLastLocation(final Location loc) {
-        if (loc == null || loc.getWorld() == null) {
-            return;
-        }
-        holder.lastLocation(loc);
-        config.save();
+        TaskUtil.runAsync(() -> {
+            if (loc == null || loc.getWorld() == null) {
+                return;
+            }
+            holder.lastLocation(loc);
+            config.save();
+        });
     }
 
     public Location getLogoutLocation() {
@@ -294,11 +297,13 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLogoutLocation(final Location loc) {
-        if (loc == null || loc.getWorld() == null) {
-            return;
-        }
-        holder.logoutLocation(loc);
-        config.save();
+        TaskUtil.runAsync(() -> {
+            if (loc == null || loc.getWorld() == null) {
+                return;
+            }
+            holder.logoutLocation(loc);
+            config.save();
+        });
     }
 
     public long getLastTeleportTimestamp() {
@@ -306,8 +311,10 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLastTeleportTimestamp(final long time) {
-        holder.timestamps().lastTeleport(time);
-        config.save();
+        TaskUtil.runAsync(() -> {
+            holder.timestamps().lastTeleport(time);
+            config.save();
+        });
     }
 
     public long getLastHealTimestamp() {
@@ -769,7 +776,9 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void save() {
-        config.save();
+        TaskUtil.runAsync(() -> {
+            config.save();
+        });
     }
 
     public void startTransaction() {

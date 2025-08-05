@@ -107,6 +107,12 @@ public interface IEssentials extends Plugin {
 
     int scheduleSyncRepeatingTask(Runnable run, long delay, long period);
 
+    int scheduleAsyncDelayedTask(Runnable run);
+
+    int scheduleAsyncDelayedTask(Runnable run, long delay);
+
+    int scheduleAsyncRepeatingTask(Runnable run, long delay, long period);
+
     PermissionsHandler getPermissionsHandler();
 
     AlternativeCommandsHandler getAlternativeCommandsHandler();

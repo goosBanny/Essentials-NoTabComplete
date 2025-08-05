@@ -6,13 +6,7 @@ import com.earth2me.essentials.textreader.IText;
 import com.earth2me.essentials.textreader.KeywordReplacer;
 import com.earth2me.essentials.textreader.TextInput;
 import com.earth2me.essentials.textreader.TextPager;
-import com.earth2me.essentials.utils.AdventureUtil;
-import com.earth2me.essentials.utils.CommonPlaceholders;
-import com.earth2me.essentials.utils.DateUtil;
-import com.earth2me.essentials.utils.FormatUtil;
-import com.earth2me.essentials.utils.LocationUtil;
-import com.earth2me.essentials.utils.MaterialUtil;
-import com.earth2me.essentials.utils.VersionUtil;
+import com.earth2me.essentials.utils.*;
 import io.papermc.lib.PaperLib;
 import net.ess3.api.IEssentials;
 import net.ess3.api.events.AfkStatusChangeEvent;
@@ -525,7 +519,7 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
             }
         }
 
-        ess.scheduleSyncDelayedTask(new DelayJoinTask());
+        ess.scheduleAsyncDelayedTask(new DelayJoinTask());
     }
 
     // Makes the compass item ingame always point to the first essentials home.  #EasterEgg
@@ -632,25 +626,27 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
-        final String cmd = event.getMessage().split(" ")[0].replace("/", "").toLowerCase(Locale.ENGLISH);
-        final int argStartIndex = event.getMessage().indexOf(" ");
-        final String args = argStartIndex == -1 ? "" // No arguments present
-                : event.getMessage().substring(argStartIndex); // arguments start at argStartIndex; substring from there.
+        TaskUtil.runAsync(() -> {
+            final String cmd = event.getMessage().split(" ")[0].replace("/", "").toLowerCase(Locale.ENGLISH);
+            final int argStartIndex = event.getMessage().indexOf(" ");
+            final String args = argStartIndex == -1 ? "" // No arguments present
+                    : event.getMessage().substring(argStartIndex); // arguments start at argStartIndex; substring from there.
 
-        // If the plugin command does not exist, check if it is an alias from commands.yml
-        if (ess.getServer().getPluginCommand(cmd) == null) {
-            final Command knownCommand = ess.provider(KnownCommandsProvider.class).getKnownCommands().get(cmd);
-            if (knownCommand instanceof FormattedCommandAlias) {
-                final FormattedCommandAlias command = (FormattedCommandAlias) knownCommand;
-                for (String fullCommand : ess.provider(FormattedCommandAliasProvider.class).createCommands(command, event.getPlayer(), args.split(" "))) {
-                    handlePlayerCommandPreprocess(event, fullCommand);
+            // If the plugin command does not exist, check if it is an alias from commands.yml
+            if (ess.getServer().getPluginCommand(cmd) == null) {
+                final Command knownCommand = ess.provider(KnownCommandsProvider.class).getKnownCommands().get(cmd);
+                if (knownCommand instanceof FormattedCommandAlias) {
+                    final FormattedCommandAlias command = (FormattedCommandAlias) knownCommand;
+                    for (String fullCommand : ess.provider(FormattedCommandAliasProvider.class).createCommands(command, event.getPlayer(), args.split(" "))) {
+                        handlePlayerCommandPreprocess(event, fullCommand);
+                    }
+                    return;
                 }
-                return;
             }
-        }
 
-        // Handle the command given from the event.
-        handlePlayerCommandPreprocess(event, cmd + args);
+            // Handle the command given from the event.
+            handlePlayerCommandPreprocess(event, cmd + args);
+        });
     }
 
     public void handlePlayerCommandPreprocess(final PlayerCommandPreprocessEvent event, final String effectiveCommand) {
@@ -977,7 +973,7 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         }
 
         if (refreshPlayer != null) {
-            ess.scheduleSyncDelayedTask(refreshPlayer::updateInventory, 1);
+            ess.scheduleAsyncDelayedTask(refreshPlayer::updateInventory, 1);
         }
     }
 
