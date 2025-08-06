@@ -86,13 +86,13 @@ public class EssentialsEntityListener implements Listener {
             event.setCancelled(true);
         }
 
-        if (attacker.isHidden() && !attacker.isAuthorized("essentials.vanish.pvp")) {
-            event.setCancelled(true);
-        }
+//        if (attacker.isHidden() && !attacker.isAuthorized("essentials.vanish.pvp")) {
+//            event.setCancelled(true);
+//        }
 
-        if (attacker.arePowerToolsEnabled()) {
-            onPlayerVsPlayerPowertool(event, defender, attacker);
-        }
+//        if (attacker.arePowerToolsEnabled()) {
+//            onPlayerVsPlayerPowertool(event, defender, attacker);
+//        }
     }
 
     private void onPlayerVsPlayerPowertool(final EntityDamageByEntityEvent event, final Player defender, final User attacker) {

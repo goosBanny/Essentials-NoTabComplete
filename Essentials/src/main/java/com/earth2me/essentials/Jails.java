@@ -193,7 +193,7 @@ public class Jails implements net.ess3.api.IJails {
             }
         }
 
-        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+        //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
         public void onJailBlockPlace(final BlockPlaceEvent event) {
             if (shouldIgnore(event.getPlayer())) {
                 return;

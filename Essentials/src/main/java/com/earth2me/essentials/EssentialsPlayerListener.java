@@ -292,7 +292,8 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         }
 
         user.startTransaction();
-        if (ess.getSettings().removeGodOnDisconnect() && user.isGodModeEnabled()) {
+        // below: ess.getSettings().removeGodOnDisconnect()
+        if (user.isGodModeEnabled()) {
             user.setGodModeEnabled(false);
         }
         if (user.isVanished()) {

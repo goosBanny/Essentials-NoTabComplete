@@ -134,7 +134,7 @@ public class SignBlockListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onSignBlockPlace(final BlockPlaceEvent event) {
         if (ess.getSettings().areSignsDisabled()) {
             event.getHandlers().unregister(this);

@@ -24,7 +24,7 @@ public class EssentialsBlockListener implements Listener {
         this.ess = ess;
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event) {
         final ItemStack is = event.getItemInHand();
 
