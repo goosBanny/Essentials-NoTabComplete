@@ -129,17 +129,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -619,17 +609,23 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
         return commandMap;
     }
 
-//    @Override
-//    public List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command command, final @NotNull String commandLabel, final String[] args) {
-//        return onTabCompleteEssentials(sender, command, commandLabel, args, Essentials.class.getClassLoader(),
-//            "com.earth2me.essentials.commands.Command", "essentials.", null);
-//    }
+    @Override
+    public List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command command, final @NotNull String commandLabel, final String[] args) {
+        return onTabCompleteEssentials(sender, command, commandLabel, args, Essentials.class.getClassLoader(),
+            "com.earth2me.essentials.commands.Command", "essentials.", null);
+    }
 
+    //WOOHOO HARDCODING!!!
+    String[] tabcompletable = {"warp", "sethome", "home", "renamehome", "delhome"};
     @Override
     public List<String> onTabCompleteEssentials(final CommandSender cSender, final Command command, final String commandLabel, final String[] args,
                                                 final ClassLoader classLoader, final String commandPath, final String permissionPrefix,
                                                 final IEssentialsModule module) {
-        if (!getSettings().isCommandOverridden(command.getName()) && (!commandLabel.startsWith("e") || commandLabel.equalsIgnoreCase(command.getName()))) {
+
+        //early exit
+        if(Arrays.stream(tabcompletable).noneMatch(c -> c.equals(command.getName()))) return Collections.emptyList();
+
+        if ((!commandLabel.startsWith("e") || commandLabel.equalsIgnoreCase(command.getName()))) {
             final Command pc = alternativeCommandsHandler.getAlternative(commandLabel);
             if (pc instanceof PluginCommand) {
                 try {
