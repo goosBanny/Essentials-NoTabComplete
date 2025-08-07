@@ -17,6 +17,7 @@
  */
 package com.earth2me.essentials;
 
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.earth2me.essentials.commands.EssentialsCommand;
 import com.earth2me.essentials.commands.IEssentialsCommand;
 import com.earth2me.essentials.commands.NoChargeException;
@@ -128,6 +129,7 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -616,12 +618,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             "com.earth2me.essentials.commands.Command", "essentials.", null);
     }
 
-    protected List<String> getPlayers(final Server server, final User interactor) {
+    protected List<String> getPlayers(final Server server, final Player interactor) {
         final List<String> players = Lists.newArrayList();
-        for (final User user : this.getOnlineUsers()) {
-            if (canInteractWith(interactor, user)) {
+        for (final Player user : Bukkit.getOnlinePlayers()) {
+            if(interactor.canSee(user))
                 players.add(user.getName());
-            }
         }
         return players;
     }
@@ -632,10 +633,13 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     public List<String> onTabCompleteEssentials(final CommandSender cSender, final Command command, final String commandLabel, final String[] args,
                                                 final ClassLoader classLoader, final String commandPath, final String permissionPrefix,
                                                 final IEssentialsModule module) {
-        User user = getUser((Player) cSender);
 
         //early exit
-        if(Arrays.stream(tabcompletable).noneMatch(c -> c.equals(command.getName()))) return getPlayers(Bukkit.getServer(), user);
+        if(Arrays.stream(tabcompletable).noneMatch(c -> c.equals(command.getName()))){
+            return StringUtil.copyPartialMatches(args[args.length-1], getPlayers(Bukkit.getServer(), (Player) cSender), Lists.newArrayList());
+        };
+
+        User user = getUser((Player) cSender);
 
         if ((!commandLabel.startsWith("e") || commandLabel.equalsIgnoreCase(command.getName()))) {
             final Command pc = alternativeCommandsHandler.getAlternative(commandLabel);
