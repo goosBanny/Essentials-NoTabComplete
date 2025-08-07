@@ -293,13 +293,13 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
 
         user.startTransaction();
         // below: ess.getSettings().removeGodOnDisconnect()
-        if (user.isGodModeEnabled()) {
-            user.setGodModeEnabled(false);
-        }
-        if (user.isVanished()) {
-            user.setLeavingHidden(true);
-            user.setVanished(false);
-        }
+//        if (user.isGodModeEnabled()) {
+//            user.setGodModeEnabled(false);
+//        }
+//        if (user.isVanished()) {
+//            user.setLeavingHidden(true);
+//            user.setVanished(false);
+//        }
         user.setLogoutLocation();
         if (user.isRecipeSee()) {
             ess.provider(InventoryViewProvider.class).getTopInventory(user.getBase().getOpenInventory()).clear();
@@ -473,10 +473,10 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
                     ess.getLogger().log(Level.INFO, "Set socialspy to false for {0} because they had it enabled without permission.", user.getName());
                 }
 
-                if (user.isGodModeEnabled() && !user.isAuthorized("essentials.god")) {
-                    user.setGodModeEnabled(false);
-                    ess.getLogger().log(Level.INFO, "Set god mode to false for {0} because they had it enabled without permission.", user.getName());
-                }
+//                if (user.isGodModeEnabled() && !user.isAuthorized("essentials.god")) {
+//                    user.setGodModeEnabled(false);
+//                    ess.getLogger().log(Level.INFO, "Set god mode to false for {0} because they had it enabled without permission.", user.getName());
+//                }
 
                 user.setConfirmingClearCommand(null);
                 user.getConfirmingPayments().clear();

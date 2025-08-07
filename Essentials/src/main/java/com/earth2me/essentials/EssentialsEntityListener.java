@@ -82,9 +82,9 @@ public class EssentialsEntityListener implements Listener {
             event.setCancelled(true);
         }
 
-        if (attacker.isGodModeEnabled() && !attacker.isAuthorized("essentials.god.pvp")) {
-            event.setCancelled(true);
-        }
+//        if (attacker.isGodModeEnabled() && !attacker.isAuthorized("essentials.god.pvp")) {
+//            event.setCancelled(true);
+//        }
 
 //        if (attacker.isHidden() && !attacker.isAuthorized("essentials.vanish.pvp")) {
 //            event.setCancelled(true);
@@ -119,7 +119,7 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
         if (event.getEntity() instanceof Player && ess.getUser((Player) event.getEntity()).isGodModeEnabled()) {
             final Player player = (Player) event.getEntity();
@@ -129,14 +129,14 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityCombust(final EntityCombustEvent event) {
         if (event.getEntity() instanceof Player && ess.getUser((Player) event.getEntity()).isGodModeEnabled()) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
     public void onEntityCombustByEntity(final EntityCombustByEntityEvent event) {
         if (event.getCombuster() instanceof Arrow && event.getEntity() instanceof Player) {
             final Arrow combuster = (Arrow) event.getCombuster();
@@ -223,7 +223,7 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFoodLevelChange(final FoodLevelChangeEvent event) {
         if (event.getEntity() instanceof Player) {
             final User user = ess.getUser((Player) event.getEntity());
@@ -244,7 +244,7 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    //@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPotionSplashEvent(final PotionSplashEvent event) {
         for (final LivingEntity entity : event.getAffectedEntities()) {
             if (entity instanceof Player && ess.getUser((Player) entity).isGodModeEnabled()) {
