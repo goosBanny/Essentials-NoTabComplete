@@ -1346,10 +1346,10 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             this.ess = ess;
         }
 
-        @EventHandler(priority = EventPriority.LOW)
-        public void onWorldLoad(final WorldLoadEvent event) {
-            PermissionsDefaults.registerBackDefaultFor(event.getWorld());
-        }
+//        @EventHandler(priority = EventPriority.LOW)
+//        public void onWorldLoad(final WorldLoadEvent event) {
+//            PermissionsDefaults.registerBackDefaultFor(event.getWorld());
+//        }
 
         @Override
         public void run() {
