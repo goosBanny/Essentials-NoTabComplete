@@ -929,73 +929,50 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         }
         return used;
     }
-
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInventoryClickEvent(final InventoryClickEvent event) {
-        Player refreshPlayer = null;
         final InventoryViewProvider provider = ess.provider(InventoryViewProvider.class);
         final Inventory top = provider.getTopInventory(event.getView());
-        final InventoryType type = top.getType();
-
         final Inventory clickedInventory;
+
         if (event.getRawSlot() < 0) {
             clickedInventory = null;
         } else {
             clickedInventory = event.getRawSlot() < top.getSize() ? top : provider.getBottomInventory(event.getView());
         }
 
-        final User user = ess.getUser((Player) event.getWhoClicked());
-        if (type == InventoryType.PLAYER) {
-            final InventoryHolder invHolder = top.getHolder();
-            if (invHolder instanceof HumanEntity) {
-                final User invOwner = ess.getUser((Player) invHolder);
-                if (user.isInvSee() && (!user.isAuthorized("essentials.invsee.modify") || invOwner.isAuthorized("essentials.invsee.preventmodify") || !invOwner.getBase().isOnline())) {
-                    event.setCancelled(true);
-                    refreshPlayer = user.getBase();
-                }
-            }
-        } else if (type == InventoryType.ENDER_CHEST) {
-            if (user.isEnderSee() && !user.isAuthorized("essentials.enderchest.modify")) {
+        if (clickedInventory != null && clickedInventory.getType() == InventoryType.PLAYER) {
+            final Player player = (Player) event.getWhoClicked();
+
+            if (ess.getSettings().isDirectHatAllowed()
+                    && event.getClick() == ClickType.LEFT
+                    && event.getSlot() == 39
+                    && event.getCursor().getType() != Material.AIR
+                    && event.getCursor().getType().getMaxDurability() == 0
+                    && !MaterialUtil.isSkull(event.getCursor().getType())
+                    && player.hasPermission("essentials.hat")
+                    && !player.hasPermission("essentials.hat.prevent-type." + event.getCursor().getType().name().toLowerCase())
+                    && !isPreventBindingHat(player, (PlayerInventory) clickedInventory)) {
+
                 event.setCancelled(true);
-                refreshPlayer = user.getBase();
-            }
-        } else if (type == InventoryType.WORKBENCH) {
-            if (user.isRecipeSee()) {
-                event.setCancelled(true);
-                refreshPlayer = user.getBase();
-            }
-        } else if (type == InventoryType.CHEST && top.getSize() == 9) {
-            final InventoryHolder invHolder = top.getHolder();
-            if (invHolder instanceof HumanEntity && user.isInvSee() && event.getClick() != ClickType.MIDDLE) {
-                event.setCancelled(true);
-                refreshPlayer = user.getBase();
-            }
-        } else if (clickedInventory != null && clickedInventory.getType() == InventoryType.PLAYER) {
-            if (ess.getSettings().isDirectHatAllowed() && event.getClick() == ClickType.LEFT && event.getSlot() == 39
-                && event.getCursor().getType() != Material.AIR && event.getCursor().getType().getMaxDurability() == 0
-                && !MaterialUtil.isSkull(event.getCursor().getType())
-                && user.isAuthorized("essentials.hat") && !user.isAuthorized("essentials.hat.prevent-type." + event.getCursor().getType().name().toLowerCase())
-                && !isPreventBindingHat(user, (PlayerInventory) clickedInventory)) {
-                event.setCancelled(true);
+
                 final PlayerInventory inv = (PlayerInventory) clickedInventory;
                 final ItemStack head = inv.getHelmet();
                 inv.setHelmet(event.getCursor());
                 event.setCursor(head);
             }
         }
-
-        if (refreshPlayer != null) {
-            ess.scheduleAsyncDelayedTask(refreshPlayer::updateInventory, 1);
-        }
     }
 
-    private boolean isPreventBindingHat(User user, PlayerInventory inventory) {
+
+    private boolean isPreventBindingHat(Player player, PlayerInventory inventory) {
         if (VersionUtil.getServerBukkitVersion().isHigherThan(VersionUtil.v1_9_4_R01)) {
             final ItemStack head = inventory.getHelmet();
-            return head != null && head.getEnchantments().containsKey(Enchantment.BINDING_CURSE) && !user.isAuthorized("essentials.hat.ignore-binding");
+            return head != null && head.getEnchantments().containsKey(Enchantment.BINDING_CURSE) && !player.hasPermission("essentials.hat.ignore-binding");
         }
         return false;
     }
+
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryCloseEvent(final InventoryCloseEvent event) {

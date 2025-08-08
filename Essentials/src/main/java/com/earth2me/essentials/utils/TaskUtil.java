@@ -7,21 +7,27 @@ import java.util.concurrent.Executors;
 
 public class TaskUtil {
 
-    private static Essentials plugin = null;
-
-    public TaskUtil(Essentials plugin){
-        TaskUtil.plugin = plugin;
-    }
+    private static Essentials plugin;
 
     public static final ExecutorService THREAD = Executors.newFixedThreadPool(4,
             r -> new Thread(r, "Essentials Async Processor Thread (x4)")
     );
+    public TaskUtil(Essentials plugin) {
+        this.plugin = plugin;
+    }
 
     public static void runAsync(Runnable task) {
         THREAD.execute(task);
     }
-
-    public static void runAsync2(Runnable task){
+    public static void runAsync2(Runnable task) {
         plugin.runTaskAsynchronously(task);
+    }
+
+    public static void runSync(Runnable task) {
+        plugin.runTaskSync(task);
+    }
+
+    public static void shutdown() {
+        THREAD.shutdown();
     }
 }
