@@ -1196,6 +1196,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     }
 
     @Override
+    public BukkitTask runTaskSync(final Runnable run) {
+        return this.getScheduler().runTask(this, run);
+    }
+
+    @Override
     public BukkitTask runTaskLaterAsynchronously(final Runnable run, final long delay) {
         return this.getScheduler().runTaskLaterAsynchronously(this, run, delay);
     }
