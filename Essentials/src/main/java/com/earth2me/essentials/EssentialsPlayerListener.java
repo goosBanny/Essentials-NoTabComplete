@@ -938,9 +938,7 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         if (event.getRawSlot() < 0) {
             clickedInventory = null;
         } else {
-            clickedInventory = event.getRawSlot() < top.getSize()
-                    ? top
-                    : provider.getBottomInventory(event.getView());
+            clickedInventory = event.getRawSlot() < top.getSize() ? top : provider.getBottomInventory(event.getView());
         }
 
         if (clickedInventory != null && clickedInventory.getType() == InventoryType.PLAYER) {
