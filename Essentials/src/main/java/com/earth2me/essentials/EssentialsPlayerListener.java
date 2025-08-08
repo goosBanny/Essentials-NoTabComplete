@@ -929,7 +929,6 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         }
         return used;
     }
-
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInventoryClickEvent(final InventoryClickEvent event) {
         final InventoryViewProvider provider = ess.provider(InventoryViewProvider.class);
@@ -939,10 +938,13 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         if (event.getRawSlot() < 0) {
             clickedInventory = null;
         } else {
-            clickedInventory = event.getRawSlot() < top.getSize() ? top : provider.getBottomInventory(event.getView());
+            clickedInventory = event.getRawSlot() < top.getSize()
+                    ? top
+                    : provider.getBottomInventory(event.getView());
         }
 
         if (clickedInventory != null && clickedInventory.getType() == InventoryType.PLAYER) {
+            final Player player = (Player) event.getWhoClicked();
 
             if (ess.getSettings().isDirectHatAllowed()
                     && event.getClick() == ClickType.LEFT
@@ -950,8 +952,11 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
                     && event.getCursor().getType() != Material.AIR
                     && event.getCursor().getType().getMaxDurability() == 0
                     && !MaterialUtil.isSkull(event.getCursor().getType())
-                    && !isPreventBindingHat((Player) event.getWhoClicked(), (PlayerInventory) clickedInventory)) {
-                    event.setCancelled(true);
+                    && player.hasPermission("essentials.hat")
+                    && !player.hasPermission("essentials.hat.prevent-type." + event.getCursor().getType().name().toLowerCase())
+                    && !isPreventBindingHat(player, (PlayerInventory) clickedInventory)) {
+
+                event.setCancelled(true);
 
                 final PlayerInventory inv = (PlayerInventory) clickedInventory;
                 final ItemStack head = inv.getHelmet();
