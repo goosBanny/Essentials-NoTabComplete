@@ -627,17 +627,15 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
         return players;
     }
 
-    //WOOHOO HARDCODING!!!
-    String[] tabcompletable = {"warp", "sethome", "home", "renamehome", "delhome"};
     @Override
     public List<String> onTabCompleteEssentials(final CommandSender cSender, final Command command, final String commandLabel, final String[] args,
                                                 final ClassLoader classLoader, final String commandPath, final String permissionPrefix,
                                                 final IEssentialsModule module) {
 
         //early exit
-        if(Arrays.stream(tabcompletable).noneMatch(c -> c.equals(command.getName()))){
+        if(!settings.isTabCompletable(command.getName())){
             return StringUtil.copyPartialMatches(args[args.length-1], getPlayers(Bukkit.getServer(), (Player) cSender), Lists.newArrayList());
-        };
+        }
 
         User user = getUser((Player) cSender);
 

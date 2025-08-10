@@ -161,6 +161,8 @@ public interface ISettings extends IConf {
 
     boolean isEcoDisabled();
 
+    boolean isTabCompletable(String str);
+
     @Deprecated
     boolean isTradeInStacks(int id);
 

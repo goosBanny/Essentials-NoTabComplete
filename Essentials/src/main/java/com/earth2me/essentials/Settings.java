@@ -66,6 +66,7 @@ public class Settings implements net.ess3.api.ISettings {
     private final transient AtomicInteger reloadCount = new AtomicInteger(0);
     private final ChatFormats chatFormats = new ChatFormats();
     private int chatRadius = 0;
+    private List<String> tabCompletableCommands;
     // #easteregg
     private char chatShout = '!';
     // #easteregg
@@ -395,6 +396,10 @@ public class Settings implements net.ess3.api.ISettings {
 
     private List<String> _getOverriddenCommands() {
         return config.getList("overridden-commands", String.class);
+    }
+
+    private List<String> _getTabCompletableCommands() {
+        return config.getList("tab-completable-commands", String.class);
     }
 
     @Override
@@ -818,6 +823,7 @@ public class Settings implements net.ess3.api.ISettings {
         changeDisplayName = _changeDisplayName();
         disabledCommands = _getDisabledCommands();
         overriddenCommands = _getOverriddenCommands();
+        tabCompletableCommands = _getTabCompletableCommands();
         playerCommands = _getPlayerCommands();
 
         final KnownCommandsProvider knownCommandsProvider = ess.provider(KnownCommandsProvider.class);
@@ -1092,6 +1098,11 @@ public class Settings implements net.ess3.api.ISettings {
     @Override
     public boolean isEcoDisabled() {
         return economyDisabled;
+    }
+
+    @Override
+    public boolean isTabCompletable(String str){
+        return tabCompletableCommands.contains(str);
     }
 
     @Override
