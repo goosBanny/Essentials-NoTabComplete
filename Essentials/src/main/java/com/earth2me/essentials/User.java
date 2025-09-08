@@ -1082,7 +1082,7 @@ public class User extends UserData implements Comparable<User>, IMessageRecipien
 
     @Override
     public void sendTl(String tlKey, Object... args) {
-        TaskUtil.runAsync(() -> {
+        TaskUtil.runAsyncMessenger(() -> {
             final String translation = playerTl(tlKey, args);
             if (translation.trim().isEmpty()) {
                 return;

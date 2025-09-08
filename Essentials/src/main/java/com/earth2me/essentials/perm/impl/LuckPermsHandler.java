@@ -68,7 +68,7 @@ public class LuckPermsHandler extends ModernVaultHandler {
 
         @Override
         public void calculate(final Player target, final ContextConsumer consumer) {
-            TaskUtil.runAsync2(() -> {
+            TaskUtil.runAsyncBukkit(() -> {
                 // If the player doesn't exist in the UserMap, just skip
                 // Ess will cause performance problems for permissions checks if it attempts to
                 // perform i/o to load the user data otherwise.
