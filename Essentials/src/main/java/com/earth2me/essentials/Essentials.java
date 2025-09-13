@@ -45,6 +45,8 @@ import com.earth2me.essentials.utils.AdventureUtil;
 import com.earth2me.essentials.utils.FormatUtil;
 import com.earth2me.essentials.utils.TaskUtil;
 import com.earth2me.essentials.utils.VersionUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import io.papermc.lib.PaperLib;
 import net.ess3.api.Economy;
@@ -133,6 +135,8 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -622,15 +626,31 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             "com.earth2me.essentials.commands.Command", "essentials.", null);
     }
 
-    protected List<String> getPlayers(final Server server, final Player interactor) {
-        final List<String> players = Lists.newArrayList();
-        for (final Player user : Bukkit.getOnlinePlayers()) {
-            if(interactor.canSee(user))
-                players.add(user.getName());
-        }
-        return players;
-    }
+    private final Cache<UUID, List<String>> CACHE = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.SECONDS)
+            .build();
 
+    protected List<String> getPlayers(final Server server, final Player interactor) {
+        try {
+            return CACHE.get(interactor.getUniqueId(), () -> {
+
+                final List<String> players = new
+                        ArrayList<>();
+
+                for (Player user : Bukkit.getOnlinePlayers()) {
+                    if (interactor.canSee(user)) {
+
+                        players.add(
+                                user.getName()
+                        );
+                    }
+                }
+                return players;
+            });
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Failed to load " + interactor.getName(), e);
+        }
+    }
     @Override
     public List<String> onTabCompleteEssentials(final CommandSender cSender, final Command command, final String commandLabel, final String[] args,
                                                 final ClassLoader classLoader, final String commandPath, final String permissionPrefix,

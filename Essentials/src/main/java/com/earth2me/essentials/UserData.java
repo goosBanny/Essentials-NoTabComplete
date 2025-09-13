@@ -183,7 +183,10 @@ public abstract class UserData extends PlayerExtension implements IConf {
         //Invalid names will corrupt the yaml
         name = StringUtil.safeString(name);
         holder.homes().put(name, LazyLocation.fromLocation(loc));
-        config.save();
+
+        TaskUtil.runAsync(() -> {
+            config.save();
+        });
     }
 
     public void delHome(final String name) throws Exception {
@@ -193,7 +196,11 @@ public abstract class UserData extends PlayerExtension implements IConf {
         }
         if (holder.homes().containsKey(search)) {
             holder.homes().remove(search);
-            config.save();
+
+            TaskUtil.runAsync(() -> {
+                config.save();
+            });
+
         } else {
             throw new TranslatableException("invalidHome", search);
         }
@@ -203,7 +210,11 @@ public abstract class UserData extends PlayerExtension implements IConf {
         final LazyLocation location = holder.homes().remove(name);
         if (location != null) {
             holder.homes().put(StringUtil.safeString(newName), location);
-            config.save();
+
+            TaskUtil.runAsync(() -> {
+                config.save();
+            });
+
         } else {
             throw new TranslatableException("invalidHome", name);
         }
@@ -323,8 +334,10 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLastHealTimestamp(final long time) {
-        holder.timestamps().lastHeal(time);
-        config.save();
+        TaskUtil.runAsync(() -> {
+            holder.timestamps().lastHeal(time);
+            config.save();
+        });
     }
 
     public String getJail() {
@@ -407,8 +420,10 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setTeleportEnabled(final boolean set) {
-        holder.teleportEnabled(set);
-        config.save();
+        TaskUtil.runAsync(() -> {
+            holder.teleportEnabled(set);
+            config.save();
+        });
     }
 
     public boolean isAutoTeleportEnabled() {
@@ -423,11 +438,13 @@ public abstract class UserData extends PlayerExtension implements IConf {
     @Deprecated
     public void setIgnoredPlayers(final List<String> players) {
         final List<UUID> uuids = new ArrayList<>();
+
         for (final String player : players) {
             final User user = ess.getOfflineUser(player);
             if (user == null) {
                 return;
             }
+
             uuids.add(user.getBase().getUniqueId());
         }
         setIgnoredPlayerUUIDs(uuids);
