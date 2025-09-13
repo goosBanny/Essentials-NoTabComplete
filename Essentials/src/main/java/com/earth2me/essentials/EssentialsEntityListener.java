@@ -263,7 +263,7 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    // @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityTarget(final EntityTargetEvent event) {
         if (event.getTarget() instanceof Player) {
             final User user = ess.getUser((Player) event.getTarget());

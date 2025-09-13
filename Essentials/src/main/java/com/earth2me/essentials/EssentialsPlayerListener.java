@@ -142,9 +142,9 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
             ess.getServer().getPluginManager().registerEvents(new ArrowPickupListener(), ess);
         }
 
-        if (isGameEventEvent()) {
-            ess.getServer().getPluginManager().registerEvents(new SculkListener1_17(), ess);
-        }
+//        if (isGameEventEvent()) {
+//            ess.getServer().getPluginManager().registerEvents(new SculkListener1_17(), ess);
+//        }
 
         if (isEntityPickupEvent()) {
             ess.getServer().getPluginManager().registerEvents(new PickupListener1_12(), ess);
@@ -824,9 +824,9 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         if (!user.getWorld().getName().equals(newWorld)) {
             user.sendTl("currentWorld", newWorld);
         }
-        if (user.isVanished()) {
-            user.setVanished(user.isAuthorized("essentials.vanish"));
-        }
+//        if (user.isVanished()) {
+//            user.setVanished(user.isAuthorized("essentials.vanish"));
+//        }
     }
 
    // @EventHandler(priority = EventPriority.NORMAL)
@@ -1093,14 +1093,14 @@ public class EssentialsPlayerListener implements Listener, FakeAccessor, Runnabl
         }
     }
 
-    private final class SculkListener1_17 implements Listener {
-        @EventHandler
-        public void onGameEvent(final org.bukkit.event.block.BlockReceiveGameEvent event) {
-            if (event.getEntity() instanceof Player && ess.getUser((Player) event.getEntity()).isVanished()) {
-                event.setCancelled(true);
-            }
-        }
-    }
+//    private final class SculkListener1_17 implements Listener {
+//        @EventHandler
+//        public void onGameEvent(final org.bukkit.event.block.BlockReceiveGameEvent event) {
+//            if (event.getEntity() instanceof Player && ess.getUser((Player) event.getEntity()).isVanished()) {
+//                event.setCancelled(true);
+//            }
+//        }
+//    }
 
     private final class CommandSendFilter implements CommandSendListenerProvider.Filter {
         @Override
