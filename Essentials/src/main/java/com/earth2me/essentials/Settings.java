@@ -156,6 +156,7 @@ public class Settings implements net.ess3.api.ISettings {
     private Set<String> multiplierPerms;
     private BigDecimal defaultMultiplier;
     private List<String> afkTimeoutCommands = Collections.emptyList();
+    private long tabCompleteCacheTimeMs;
 
     public Settings(final IEssentials ess) {
         this.ess = ess;
@@ -825,6 +826,7 @@ public class Settings implements net.ess3.api.ISettings {
         overriddenCommands = _getOverriddenCommands();
         tabCompletableCommands = _getTabCompletableCommands();
         playerCommands = _getPlayerCommands();
+        tabCompleteCacheTimeMs = _getTabCompleteCacheTime();
 
         final KnownCommandsProvider knownCommandsProvider = ess.provider(KnownCommandsProvider.class);
 
@@ -1103,6 +1105,11 @@ public class Settings implements net.ess3.api.ISettings {
     @Override
     public boolean isTabCompletable(String str){
         return tabCompletableCommands.contains(str);
+    }
+
+    @Override
+    public long getTabCompleteCacheTime() {
+        return tabCompleteCacheTimeMs;
     }
 
     @Override
@@ -1543,6 +1550,10 @@ public class Settings implements net.ess3.api.ISettings {
 
     private int _getMailsPerMinute() {
         return config.getInt("mails-per-minute", 1000);
+    }
+
+    private long _getTabCompleteCacheTime() {
+        return config.getLong("tabcomplete-cache-time-ms", 60000L);
     }
 
     @Override

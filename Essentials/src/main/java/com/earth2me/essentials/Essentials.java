@@ -24,6 +24,7 @@ import com.earth2me.essentials.commands.NoChargeException;
 import com.earth2me.essentials.commands.NotEnoughArgumentsException;
 import com.earth2me.essentials.commands.PlayerNotFoundException;
 import com.earth2me.essentials.commands.QuietAbortException;
+import com.earth2me.essentials.config.ConfigurateUtil;
 import com.earth2me.essentials.economy.EconomyLayers;
 import com.earth2me.essentials.economy.vault.VaultEconomyProvider;
 import com.earth2me.essentials.items.AbstractItemDb;
@@ -45,6 +46,8 @@ import com.earth2me.essentials.utils.AdventureUtil;
 import com.earth2me.essentials.utils.FormatUtil;
 import com.earth2me.essentials.utils.TaskUtil;
 import com.earth2me.essentials.utils.VersionUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import io.papermc.lib.PaperLib;
 import net.ess3.api.Economy;
@@ -133,6 +136,8 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -172,6 +177,8 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     private transient RandomTeleport randomTeleport;
     private transient UpdateChecker updateChecker;
     private transient BukkitAudiences bukkitAudience;
+
+    private Cache<UUID, List<String>> TAB_COMPLETE_CACHE;
 
     static {
         EconomyLayers.init();
@@ -259,6 +266,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
 
             confList = new ArrayList<>();
             settings = new Settings(this);
+
+            TAB_COMPLETE_CACHE = CacheBuilder.newBuilder()
+                    .expireAfterWrite(settings.getTabCompleteCacheTime(), TimeUnit.MILLISECONDS)
+                    .build();
+
             confList.add(settings);
             execTimer.mark("Settings");
 
@@ -622,15 +634,28 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             "com.earth2me.essentials.commands.Command", "essentials.", null);
     }
 
-    protected List<String> getPlayers(final Server server, final Player interactor) {
-        final List<String> players = Lists.newArrayList();
-        for (final Player user : Bukkit.getOnlinePlayers()) {
-            if(interactor.canSee(user))
-                players.add(user.getName());
-        }
-        return players;
-    }
 
+    protected List<String> getPlayers(final Server server, final Player interactor) {
+        try {
+            return TAB_COMPLETE_CACHE.get(interactor.getUniqueId(), () -> {
+
+                final List<String> players = new
+                        ArrayList<>();
+
+                for (Player user : Bukkit.getOnlinePlayers()) {
+                    if (interactor.canSee(user)) {
+
+                        players.add(
+                                user.getName()
+                        );
+                    }
+                }
+                return players;
+            });
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Failed to load " + interactor.getName(), e);
+        }
+    }
     @Override
     public List<String> onTabCompleteEssentials(final CommandSender cSender, final Command command, final String commandLabel, final String[] args,
                                                 final ClassLoader classLoader, final String commandPath, final String permissionPrefix,
