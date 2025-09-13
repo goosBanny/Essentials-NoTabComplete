@@ -24,6 +24,7 @@ import com.earth2me.essentials.commands.NoChargeException;
 import com.earth2me.essentials.commands.NotEnoughArgumentsException;
 import com.earth2me.essentials.commands.PlayerNotFoundException;
 import com.earth2me.essentials.commands.QuietAbortException;
+import com.earth2me.essentials.config.ConfigurateUtil;
 import com.earth2me.essentials.economy.EconomyLayers;
 import com.earth2me.essentials.economy.vault.VaultEconomyProvider;
 import com.earth2me.essentials.items.AbstractItemDb;
@@ -177,6 +178,8 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     private transient UpdateChecker updateChecker;
     private transient BukkitAudiences bukkitAudience;
 
+    private Cache<UUID, List<String>> TAB_COMPLETE_CACHE;
+
     static {
         EconomyLayers.init();
     }
@@ -263,6 +266,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
 
             confList = new ArrayList<>();
             settings = new Settings(this);
+
+            TAB_COMPLETE_CACHE = CacheBuilder.newBuilder()
+                    .expireAfterWrite(settings.getTabCompleteCacheTime(), TimeUnit.MILLISECONDS)
+                    .build();
+
             confList.add(settings);
             execTimer.mark("Settings");
 
@@ -626,13 +634,10 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             "com.earth2me.essentials.commands.Command", "essentials.", null);
     }
 
-    private final Cache<UUID, List<String>> CACHE = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.SECONDS)
-            .build();
 
     protected List<String> getPlayers(final Server server, final Player interactor) {
         try {
-            return CACHE.get(interactor.getUniqueId(), () -> {
+            return TAB_COMPLETE_CACHE.get(interactor.getUniqueId(), () -> {
 
                 final List<String> players = new
                         ArrayList<>();

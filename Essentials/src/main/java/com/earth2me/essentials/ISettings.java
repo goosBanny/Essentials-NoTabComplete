@@ -163,6 +163,8 @@ public interface ISettings extends IConf {
 
     boolean isTabCompletable(String str);
 
+    long getTabCompleteCacheTime();
+
     @Deprecated
     boolean isTradeInStacks(int id);
 
