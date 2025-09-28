@@ -1553,7 +1553,7 @@ public class Settings implements net.ess3.api.ISettings {
     }
 
     private long _getTabCompleteCacheTime() {
-        return config.getLong("tabcomplete-cache-time-ms", 60000L);
+        return config.getLong("tab-complete-cache-time-ms", 60000L);
     }
 
     @Override

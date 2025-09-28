@@ -25,6 +25,12 @@
 # +------------------------------------------------------+ #
 ############################################################
 
+# Tab Completion is disabled on all commands in EssX-honk by default. You can enable it below
+# for specific commands!
+# Leave empty to disable it globally. Aliases are covered automagically.
+tab-completable-commands: ["warp", "sethome", "home", "renamehome", "delhome", "kit"]
+tab-complete-cache-time-ms: 60000
+
 # A color code between 0-9 or a-f. Set to 'none' to disable.
 # In 1.16+, you can use hex color codes here as well (for example, #613e1d is brown).
 ops-name-color: '4'
