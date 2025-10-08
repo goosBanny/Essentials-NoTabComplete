@@ -1,5 +1,7 @@
 package com.earth2me.essentials.utils;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.ess3.api.IEssentials;
 import net.ess3.provider.AbstractChatEvent;
 import net.kyori.adventure.text.Component;
@@ -10,6 +12,8 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import java.time.Duration;
+
 public final class AdventureUtil {
     private static final LegacyComponentSerializer LEGACY_SERIALIZER;
     private static final MiniMessage MINI_MESSAGE_NO_TAGS;
@@ -17,6 +21,16 @@ public final class AdventureUtil {
     private static final NamedTextColor[] COLORS = new NamedTextColor[]{NamedTextColor.BLACK, NamedTextColor.DARK_BLUE, NamedTextColor.DARK_GREEN, NamedTextColor.DARK_AQUA, NamedTextColor.DARK_RED, NamedTextColor.DARK_PURPLE, NamedTextColor.GOLD, NamedTextColor.GRAY, NamedTextColor.DARK_GRAY, NamedTextColor.BLUE, NamedTextColor.GREEN, NamedTextColor.AQUA, NamedTextColor.RED, NamedTextColor.LIGHT_PURPLE, NamedTextColor.YELLOW, NamedTextColor.WHITE};
     private static IEssentials ess;
     private static MiniMessage miniMessageInstance;
+
+    private static final Cache<String, Component> MINI_TO_COMPONENT_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .build();
+
+    private static final Cache<Component, String> COMPONENT_TO_MINI_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .build();
 
     static {
         final LegacyComponentSerializer.Builder builder = LegacyComponentSerializer.builder()
@@ -74,7 +88,12 @@ public final class AdventureUtil {
      * Converts a MiniMessage string to a section sign legacy string.
      */
     public static String miniToLegacy(final String format) {
-        return adventureToLegacy(miniMessage().deserialize(format));
+        try {
+            final Component component = MINI_TO_COMPONENT_CACHE.get(format, () -> miniMessage().deserialize(format));
+            return adventureToLegacy(component);
+        } catch (Exception e) {
+            return adventureToLegacy(miniMessage().deserialize(format));
+        }
     }
 
     /**
@@ -91,10 +110,20 @@ public final class AdventureUtil {
      */
     public static String legacyToMini(String text, boolean useCustomTags) {
         final Component deserializedText = LEGACY_SERIALIZER.deserialize(text);
-        if (useCustomTags) {
-            return miniMessageInstance.serialize(deserializedText);
-        } else {
-            return MINI_MESSAGE_NO_TAGS.serialize(deserializedText);
+        try {
+            return COMPONENT_TO_MINI_CACHE.get(deserializedText, () -> {
+                if (useCustomTags) {
+                    return miniMessageInstance.serialize(deserializedText);
+                } else {
+                    return MINI_MESSAGE_NO_TAGS.serialize(deserializedText);
+                }
+            });
+        } catch (Exception e) {
+            if (useCustomTags) {
+                return miniMessageInstance.serialize(deserializedText);
+            } else {
+                return MINI_MESSAGE_NO_TAGS.serialize(deserializedText);
+            }
         }
     }
 

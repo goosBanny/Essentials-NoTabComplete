@@ -183,10 +183,7 @@ public abstract class UserData extends PlayerExtension implements IConf {
         //Invalid names will corrupt the yaml
         name = StringUtil.safeString(name);
         holder.homes().put(name, LazyLocation.fromLocation(loc));
-
-        TaskUtil.runAsync(() -> {
-            config.save();
-        });
+        config.save();
     }
 
     public void delHome(final String name) throws Exception {
@@ -196,11 +193,7 @@ public abstract class UserData extends PlayerExtension implements IConf {
         }
         if (holder.homes().containsKey(search)) {
             holder.homes().remove(search);
-
-            TaskUtil.runAsync(() -> {
-                config.save();
-            });
-
+            config.save();
         } else {
             throw new TranslatableException("invalidHome", search);
         }
@@ -210,11 +203,7 @@ public abstract class UserData extends PlayerExtension implements IConf {
         final LazyLocation location = holder.homes().remove(name);
         if (location != null) {
             holder.homes().put(StringUtil.safeString(newName), location);
-
-            TaskUtil.runAsync(() -> {
-                config.save();
-            });
-
+            config.save();
         } else {
             throw new TranslatableException("invalidHome", name);
         }
@@ -294,13 +283,11 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLastLocation(final Location loc) {
-        TaskUtil.runAsync(() -> {
-            if (loc == null || loc.getWorld() == null) {
-                return;
-            }
-            holder.lastLocation(loc);
-            config.save();
-        });
+        if (loc == null || loc.getWorld() == null) {
+            return;
+        }
+        holder.lastLocation(loc);
+        config.save();
     }
 
     public Location getLogoutLocation() {
@@ -309,13 +296,11 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLogoutLocation(final Location loc) {
-        TaskUtil.runAsync(() -> {
-            if (loc == null || loc.getWorld() == null) {
-                return;
-            }
-            holder.logoutLocation(loc);
-            config.save();
-        });
+        if (loc == null || loc.getWorld() == null) {
+            return;
+        }
+        holder.logoutLocation(loc);
+        config.save();
     }
 
     public long getLastTeleportTimestamp() {
@@ -323,10 +308,8 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLastTeleportTimestamp(final long time) {
-        TaskUtil.runAsync(() -> {
-            holder.timestamps().lastTeleport(time);
-            config.save();
-        });
+        holder.timestamps().lastTeleport(time);
+        config.save();
     }
 
     public long getLastHealTimestamp() {
@@ -334,10 +317,8 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setLastHealTimestamp(final long time) {
-        TaskUtil.runAsync(() -> {
-            holder.timestamps().lastHeal(time);
-            config.save();
-        });
+        holder.timestamps().lastHeal(time);
+        config.save();
     }
 
     public String getJail() {
@@ -420,10 +401,8 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void setTeleportEnabled(final boolean set) {
-        TaskUtil.runAsync(() -> {
-            holder.teleportEnabled(set);
-            config.save();
-        });
+        holder.teleportEnabled(set);
+        config.save();
     }
 
     public boolean isAutoTeleportEnabled() {
@@ -800,11 +779,15 @@ public abstract class UserData extends PlayerExtension implements IConf {
     }
 
     public void startTransaction() {
-        config.startTransaction();
+        TaskUtil.runAsync(() -> {
+            config.startTransaction();
+        });
     }
 
     public void stopTransaction() {
-        config.stopTransaction();
+        TaskUtil.runAsync(() -> {
+            config.stopTransaction();
+        });
     }
 
     public void setConfigProperty(String node, Object object) {

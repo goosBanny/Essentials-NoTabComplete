@@ -1071,7 +1071,9 @@ public class User extends UserData implements Comparable<User>, IMessageRecipien
 
     @Override
     public void sendComponent(ComponentLike component) {
-        ess.getBukkitAudience().player(base).sendMessage(component);
+        TaskUtil.runAsync(() -> {
+            ess.getBukkitAudience().player(base).sendMessage(component);
+        });
     }
 
     @Override
@@ -1082,7 +1084,7 @@ public class User extends UserData implements Comparable<User>, IMessageRecipien
 
     @Override
     public void sendTl(String tlKey, Object... args) {
-        TaskUtil.runAsyncMessenger(() -> {
+        TaskUtil.runAsync(() -> {
             final String translation = playerTl(tlKey, args);
             if (translation.trim().isEmpty()) {
                 return;
