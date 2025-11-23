@@ -5,6 +5,8 @@ import com.earth2me.essentials.utils.TaskUtil;
 import com.google.common.io.Files;
 import net.ess3.api.IEssentials;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -148,7 +150,7 @@ public class ModernUUIDCache {
 
             nameToUuidMap.clear();
 
-            try (final DataInputStream dis = new DataInputStream(new FileInputStream(nameToUuidFile))) {
+            try (final DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(nameToUuidFile)))) {
                 while (dis.available() > 0) {
                     final String username = dis.readUTF();
                     final UUID uuid = new UUID(dis.readLong(), dis.readLong());
@@ -176,7 +178,7 @@ public class ModernUUIDCache {
 
             uuidCache.clear();
 
-            try (final DataInputStream dis = new DataInputStream(new FileInputStream(uuidCacheFile))) {
+            try (final DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(uuidCacheFile)))) {
                 while (dis.available() > 0) {
                     final UUID uuid = new UUID(dis.readLong(), dis.readLong());
                     if (uuidCache.contains(uuid) && debug) {
@@ -228,7 +230,7 @@ public class ModernUUIDCache {
     }
 
     public static void writeUuidCache(final File file, Set<UUID> uuids) throws IOException {
-        try (final DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
+        try (final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
             for (final UUID uuid: uuids) {
                 dos.writeLong(uuid.getMostSignificantBits());
                 dos.writeLong(uuid.getLeastSignificantBits());
@@ -237,7 +239,7 @@ public class ModernUUIDCache {
     }
 
     public static void writeNameUuidMap(final File file, final Map<String, UUID> nameToUuidMap) throws IOException {
-        try (final DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
+        try (final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
             for (final Map.Entry<String, UUID> entry : nameToUuidMap.entrySet()) {
                 dos.writeUTF(entry.getKey());
                 final UUID uuid = entry.getValue();
