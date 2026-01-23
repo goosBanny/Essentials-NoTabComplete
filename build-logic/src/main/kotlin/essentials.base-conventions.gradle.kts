@@ -3,7 +3,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id("java")
     id("net.kyori.indra")
-    id("net.kyori.indra.checkstyle")
     id("net.kyori.indra.publishing")
 }
 
@@ -138,48 +137,48 @@ configurations.configureEach {
         }
     }
 }
-
-indra {
-    checkstyle(checkstyleVersion)
-
-    github("EssentialsX", "Essentials")
-    gpl3OnlyLicense()
-
-    publishReleasesTo("essx", "https://repo.essentialsx.net/releases/")
-    publishSnapshotsTo("essx", "https://repo.essentialsx.net/snapshots/")
-
-    configurePublications {
-        pom {
-            description.set("The essential plugin suite for Minecraft servers.")
-            url.set("https://essentialsx.net")
-            developers {
-                developer {
-                    id.set("mdcfe")
-                    name.set("MD")
-                    email.set("md@n3fs.co.uk")
-                }
-                developer {
-                    id.set("pop4959")
-                }
-                developer {
-                    id.set("JRoy")
-                    name.set("Josh Roy")
-                }
-            }
-            ciManagement {
-                system.set("Jenkins")
-                url.set("https://ci.ender.zone/job/EssentialsX")
-            }
-        }
-    }
-
-    javaVersions {
-        target(8)
-        minimumToolchain(21)
-        // Don't enforce running tests on Java 8; we only care about the release for compiling, not running tests
-        strictVersions(false)
-    }
-}
+//
+//indra {
+//    checkstyle(checkstyleVersion)
+//
+//    github("EssentialsX", "Essentials")
+//    gpl3OnlyLicense()
+//
+//    publishReleasesTo("essx", "https://repo.essentialsx.net/releases/")
+//    publishSnapshotsTo("essx", "https://repo.essentialsx.net/snapshots/")
+//
+//    configurePublications {
+//        pom {
+//            description.set("The essential plugin suite for Minecraft servers.")
+//            url.set("https://essentialsx.net")
+//            developers {
+//                developer {
+//                    id.set("mdcfe")
+//                    name.set("MD")
+//                    email.set("md@n3fs.co.uk")
+//                }
+//                developer {
+//                    id.set("pop4959")
+//                }
+//                developer {
+//                    id.set("JRoy")
+//                    name.set("Josh Roy")
+//                }
+//            }
+//            ciManagement {
+//                system.set("Jenkins")
+//                url.set("https://ci.ender.zone/job/EssentialsX")
+//            }
+//        }
+//    }
+//
+//    javaVersions {
+//        target(8)
+//        minimumToolchain(21)
+//        // Don't enforce running tests on Java 8; we only care about the release for compiling, not running tests
+//        strictVersions(false)
+//    }
+//}
 
 // undo https://github.com/KyoriPowered/indra/blob/master/indra-common/src/main/kotlin/net/kyori/indra/IndraPlugin.kt#L57
 extensions.getByType<BasePluginExtension>().archivesName.set(project.name)
